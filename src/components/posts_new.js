@@ -3,14 +3,20 @@ import { Field, reduxForm } from 'redux-form';
 
 class PostsNew extends Component {
     renderField(field) {
+        const { meta: { touched, error } } = field;
+        const className = `form-group ${touched && error ? 'has-danger' : ''}`;
+
         return (
-            <div className="form-group">
+            <div className={className}>
                 <label>{field.label}</label>
                 <input
                     type="text"
                     className="form-control"
                     {...field.input}
                 />
+                <div className="text-help">
+                    {touched ? error : ''}
+                </div>
             </div>
         );
     }
@@ -28,24 +34,31 @@ class PostsNew extends Component {
         );
     }
 
+    onSubmit(values) {
+        console.log(values);
+    }
+
     render() {
+        const { handleSubmit } = this.props;
+
         return (
-            <form>
+            <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
                 <Field
                     label="Title"
                     name="title"
-                    component={this.renderField} 
+                    component={this.renderField}
                 />
                 <Field
                     label="Categories"
                     name="categories"
-                    component={this.renderField} 
+                    component={this.renderField}
                 />
                 <Field
                     label="Post Content"
                     name="content"
-                    component={this.renderField} 
+                    component={this.renderField}
                 />
+                <button type="submit" className="btn btn-primary">Save</button>
             </form>
         );
     }
@@ -57,6 +70,12 @@ function validate(values) {
     // Validate the inputs from 'values'
     if (!values.title) {
         errors.title = "Enter a title";
+    }
+    if (!values.categories) {
+        errors.categories = "Enter a category";
+    }
+    if (!values.content) {
+        errors.content = "You need a content";
     }
 
     return errors;
